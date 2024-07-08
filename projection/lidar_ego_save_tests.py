@@ -229,12 +229,27 @@ def main():
     model = initialize_model(model_dir='lgs')
 
     # output_file_np = '../../data/tracking_input/sample_mini_train_v3.npy'
-    output_file_pkl = '../../data/tracking_input/sample_mini_train_v6.pkl'
+    output_file_pkl = '../../data/tracking_input/sample_mini_val_v3.pkl'
     results = {}
+
+    start = 0  # with this sample
+    finish = 2  # without this sample
+
+    # example for running [2,4]
+    # note: if the finish > actual data limit it doest matter
+    start = 2
+    finish = 5
+    # px jekina apo 0 mexri 2000 sto proto subsplit. sto deytero apo 2000 mexri 4000 ktl
+    # DONT FORGET TO CHANGE THE NAME OF THE OUTPUT PKL FILE EACH IN EACH SUBSPLIT
 
     # for all scenes
     for i in tqdm(range(len(data))):
-
+        # print('i', i)  # sample
+        if i < start:
+            continue
+        if i == finish:
+            break
+          
         # retrieve the sample_token and timestamp
         sample_token = data[i]['metadata'][0]['token']
         print(sample_token)
