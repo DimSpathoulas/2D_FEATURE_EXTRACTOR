@@ -218,19 +218,25 @@ def world_to_cam(nusc, cam, box):
 
 file_counter = 0
 
-def save_results(results, base_filename):
-    global file_counter
-    filename = f"{base_filename}_{file_counter}.pkl"
+def save_results(new_data, base_filename):
 
-    # Ensure we're not overwriting an existing file
-    while os.path.exists(filename):
-        file_counter += 1
-        filename = f"{base_filename}_{file_counter}.pkl"
+    # Check if the file exists
+    if os.path.exists(base_filename):
+        # Load existing data
+        with open(base_filename, 'rb') as read_file:
+            try:
+                existing_data = pickle.load(read_file)
+            except EOFError:
+                existing_data = []
+    else:
+        existing_data = []
 
-    with open(filename, 'wb') as f:
-        pickle.dump(results, f)
-    print(f"Results saved to {filename}")
-    file_counter += 1
+    # Append the new data
+    existing_data.append(new_data)
+
+    # Save the combined data back to the file
+    with open(base_filename, 'wb') as write_file:
+        pickle.dump(existing_data, write_file)
 
 
 def main():
