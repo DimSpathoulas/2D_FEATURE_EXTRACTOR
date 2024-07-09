@@ -224,10 +224,7 @@ def save_results(new_data, base_filename):
     if os.path.exists(base_filename):
         # Load existing data
         with open(base_filename, 'rb') as read_file:
-            try:
-                existing_data = pickle.load(read_file)
-            except EOFError:
-                existing_data = []
+            existing_data = pickle.load(read_file)
     else:
         existing_data = []
 
