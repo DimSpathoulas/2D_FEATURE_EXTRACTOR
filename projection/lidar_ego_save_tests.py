@@ -219,17 +219,20 @@ def world_to_cam(nusc, cam, box):
 file_counter = 0
 
 def save_results(new_data, base_filename):
-
     # Check if the file exists
     if os.path.exists(base_filename):
         # Load existing data
         with open(base_filename, 'rb') as read_file:
             existing_data = pickle.load(read_file)
-    else:
-        existing_data = []
 
-    # Append the new data
-    existing_data.append(new_data)
+        # Ensure existing_data is a dictionary
+        if not isinstance(existing_data, dict):
+            existing_data = {}
+    else:
+        existing_data = {}
+
+    # Merge the new data with existing data
+    existing_data.update(new_data)
 
     # Save the combined data back to the file
     with open(base_filename, 'wb') as write_file:
