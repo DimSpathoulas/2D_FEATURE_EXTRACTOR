@@ -214,8 +214,6 @@ def world_to_cam(nusc, cam, box):
 
     return points, depths
 
-file_counter = 0
-
 
 def save_results(new_data, base_filename):
     # Check if the file exists
