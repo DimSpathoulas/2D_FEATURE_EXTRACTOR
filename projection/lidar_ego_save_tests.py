@@ -10,13 +10,11 @@ from mrcnn import visualize
 import os
 import torch
 from PIL import Image
+import argparse
 import os.path as osp
 import pickle
 from shapely.geometry import MultiPoint, box
 from shapely.geometry import Polygon, LineString
-
-# TA ARXIKA MAS
-# tracking_names = ['pedestrian', 'bicycle', 'motorcycle', 'car', 'bus', 'truck']
 
 # APO TO NUSCENES
 tracking_names = ['pedestrian', 'bicycle', 'motorcycle', 'car', 'bus', 'truck', 'trailer']
@@ -218,6 +216,7 @@ def world_to_cam(nusc, cam, box):
 
 file_counter = 0
 
+
 def save_results(new_data, base_filename):
     # Check if the file exists
     if os.path.exists(base_filename):
@@ -238,20 +237,29 @@ def save_results(new_data, base_filename):
     with open(base_filename, 'wb') as write_file:
         pickle.dump(existing_data, write_file)
 
-
 def main():
 
-    version = 'v1.0-mini'
-    data_root = '../../data/nuscenes/v1.0-mini'
-    detection_file = "../../data/centerpoint_dets/centerpoint_predictions_mini_train_v7.npy"
+    parser = argparse.ArgumentParser(description="Project 3d detections to camera planes and extract feature vectors.")
 
-    data = np.load(detection_file, allow_pickle=True)
-    nusc = NuScenes(version=version, dataroot=data_root, verbose=True)
+    parser.add_argument('--version', type=str, default='v1.0-mini',
+                        help='NuScenes dataset version --v1.0-trainval or v1.0-mini')
+    parser.add_argument('--data_root', type=str, default='../../data/nuscenes/v1.0-mini',
+                        help='Root directory of the NuScenes dataset')
+    parser.add_argument('--detection_file', type=str,
+                        default="../../data/centerpoint_dets/centerpoint_predictions_mini_val_v4.npy",
+                        help='Path to the npy detection file')
+    parser.add_argument('--output_file', type=str,
+                        default='../../data/tracking_input/sample_mini_val_v2.pkl',
+                        help='Path to the output pkl file')
+
+    args = parser.parse_args()
+
+    data = np.load(args.detection_file, allow_pickle=True)
+    nusc = NuScenes(version=args.version, dataroot=args.data_root, verbose=True)
 
     model = initialize_model(model_dir='lgs')
 
-    # output_file_np = '../../data/tracking_input/sample_mini_train_v3.npy'
-    output_file_pkl = '../../data/tracking_input/sample_mini_val_v3'
+    output_file_pkl = args.output_file
     results = {}
 
     # for all scenes
