@@ -66,8 +66,8 @@ def create_box(bbox3d_input):
     # 3d bounding box corners
     x_corners = [w / 2, -w / 2, -w / 2, w / 2, w / 2, -w / 2, -w / 2, w / 2]
     y_corners = [l / 2, l / 2, -l / 2, -l / 2, l / 2, l / 2, -l / 2, -l / 2]
-    z_corners = [-h / 2, -h / 2, -h / 2, -h / 2, h / 2, h / 2, h / 2, h / 2]
-
+    # z_corners = [-h / 2, -h / 2, -h / 2, -h / 2, h / 2, h / 2, h / 2, h / 2]
+    z_corners = [0, 0, 0, 0, -h, -h, -h, -h]
     # rotate and translate 3d bounding box
     corners_3d = np.dot(R, np.vstack([x_corners, y_corners, z_corners]))
     corners_3d[0, :] = corners_3d[0, :] + bbox3d[0]
@@ -239,15 +239,15 @@ def main():
 
     parser = argparse.ArgumentParser(description="Project 3d detections to camera planes and extract feature vectors.")
 
-    parser.add_argument('--version', type=str, default='v1.0-mini',
+    parser.add_argument('--version', type=str, default='v1.0-trainval',
                         help='NuScenes dataset version --v1.0-trainval or v1.0-mini')
-    parser.add_argument('--data_root', type=str, default='../../data/nuscenes/v1.0-mini',
+    parser.add_argument('--data_root', type=str, default='/second_ext4/ktsiakas/kosmas/nuscenes/v1.0-trainval',
                         help='Root directory of the NuScenes dataset')
     parser.add_argument('--detection_file', type=str,
-                        default="../../data/centerpoint_dets/centerpoint_predictions_mini_val_v4.npy",
+                        default="/home/ktsiakas/thesis_new/PC_FEATURE_EXTRACTOR/tools/centerpoint_predictions_val_2.npy",
                         help='Path to the npy detection file')
     parser.add_argument('--output_file', type=str,
-                        default='../../data/tracking_input/sample_mini_val_v2.pkl',
+                        default='mrcnn_val_2_depth2.pkl',
                         help='Path to the output pkl file')
 
     args = parser.parse_args()
@@ -262,15 +262,17 @@ def main():
 
     # for all scenes
     for i in tqdm(range(len(data))):
-          
+
+        if i < 84:
+            continue
         # retrieve the sample_token and timestamp
         sample_token = data[i]['metadata'][0]['token']
-        print(sample_token)
+        # print(sample_token)
         results[sample_token] = []
 
         timestamp = data[i]['metadata'][0]['timestamp']
         num_objects = data[i]['pred_labels'].shape[0]
-
+        # print(num_objects, sample_token, '\n\n')
         # retrieve the lidar to ego transformation
         sample_data = nusc.get('sample', sample_token)
         lidar_data = nusc.get('sample_data', sample_data['data']['LIDAR_TOP'])
@@ -340,7 +342,13 @@ def main():
                 # Also make sure points are at least 1m in front of the camera to avoid seeing the lidar points on the camera
                 # casing for non-keyframes which are slightly out of sync.
                 mask = np.ones(depths.shape[0], dtype=bool)
-                mask = np.logical_and(mask, depths > 1.0)
+
+                
+
+                mask = np.logical_and(mask, depths > 2.0)  # CHANGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
+
+
                 # mask = np.logical_and(mask, points[0, :] > 1)
                 # mask = np.logical_and(mask, points[0, :] < im.size[0] - 1)
                 # mask = np.logical_and(mask, points[1, :] > 1)
@@ -374,7 +382,7 @@ def main():
 
                 # ## Draw rectangle on image with coords
                 # image = cv2.rectangle(image, (min_x, min_y), (max_x, max_y), (255, 165, 0), 3)
-                #
+                
                 # font = cv2.FONT_HERSHEY_SIMPLEX
                 # font_scale = 1
                 # font_thickness = 1
@@ -384,7 +392,7 @@ def main():
                 # cv2.putText(image, track_name, (text_x, text_y), font, font_scale,
                 #             (255, 255, 255), font_thickness,
                 #             cv2.LINE_AA)
-                #
+                
                 # for p in range(points.shape[0]):
                 #     cv2.circle(
                 #         image, (int(points[p][0]), int(points[p][1])),
@@ -408,7 +416,7 @@ def main():
             image = cam_info['image']
             projections = projection_dict[v]
             jj = dict_info_stack[v]
-
+            # print(jj.shape)
             mrcnn_results = model.detect([image], projections=projections, verbose=0)
             feature_vectors = mrcnn_results
 
@@ -442,6 +450,7 @@ def main():
 
                     if np.all(existing_result['box'] == final_box_pred):
                         cap = 1
+                        # print('here')
                         # print(track_name, existing_result['box'], pred_boxes, camera_onehot_vec)
                         old_projection = existing_result['projection']
 
@@ -471,6 +480,7 @@ def main():
                         'pred_score': pred_score
                     })
 
+                # print(results_temp, '\n\n\\n\n\n\n\n')
             # ### for vis
             # cv2.imshow(str(v), cam_info['image'])
             # cv2.waitKey(0)

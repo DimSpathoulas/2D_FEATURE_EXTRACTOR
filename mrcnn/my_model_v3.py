@@ -5,6 +5,13 @@ The main Mask R-CNN model implementation.
 Copyright (c) 2017 Matterport, Inc.
 Licensed under the MIT License (see LICENSE for details)
 Written by Waleed Abdulla
+
+CHECK 223
+L935
+L1821
+L2102
+L2098
+L2556
 """
 
 import os
@@ -177,6 +184,8 @@ def resnet_graph(input_image, architecture, stage5=False, train_bn=True):
         train_bn: Boolean. Train or freeze Batch Norm layers
     """
     assert architecture in ["resnet50", "resnet101"]
+
+    print('IM BATMAN 1')
     # Stage 1
     x = KL.ZeroPadding2D((3, 3))(input_image)
     x = KL.Conv2D(64, (7, 7), strides=(2, 2), name='conv1', use_bias=True)(x)
@@ -879,6 +888,7 @@ def rpn_graph(feature_map, anchors_per_location, anchor_stride):
     # TODO: check if stride of 2 causes alignment issues if the feature map
     # is not even.
     # Shared convolutional base of the RPN
+    print('IM BATMAN 2')
     shared = KL.Conv2D(512, (3, 3), padding='same', activation='relu',
                        strides=anchor_stride,
                        name='rpn_conv_shared')(feature_map)
@@ -1815,47 +1825,47 @@ class DataGenerator(KU.Sequence):
 ############################################################
 
 
-class Feature_Extractor(object):
+# class Feature_Extractor(object):
 
-    def __init__(self, pool_1=5, pool_2=3):
+#     def __init__(self, pool_1=5, pool_2=3):
 
-        self.pool_1 = pool_1
-        self.pool_2 = pool_2
+#         self.pool_1 = pool_1
+#         self.pool_2 = pool_2
 
-        self.keras_model = self.build()
+#         self.keras_model = self.build()
 
-    def build(self):
+#     def build(self):
 
-        roi_aligns = KL.Input(shape=[7, 7, 256], name="roi_aligns")
-        print('roailigns', roi_aligns.shape)
+#         roi_aligns = KL.Input(shape=[7, 7, 256], name="roi_aligns")
+#         print('roailigns', roi_aligns.shape)
 
-        feature_vectors = self.extractor(roi_aligns)
-        print('feature_vectors', feature_vectors.shape)
+#         feature_vectors = self.extractor(roi_aligns)
+#         print('feature_vectors', feature_vectors.shape)
 
-        model = KM.Model([roi_aligns], [feature_vectors])
+#         model = KM.Model([roi_aligns], [feature_vectors])
 
-        return model
+#         return model
 
-    def extractor(self, roi_aligns):
+#     def extractor(self, roi_aligns):
 
-        # size n, 7, 7, 256
+#         # size n, 7, 7, 256
 
-        # convolution 2d for n, 3, 3, 512 relu
-        x = KL.Conv2D(512, (self.pool_1, self.pool_1), activation='relu', use_bias=True,
-                      kernel_initializer=tf.constant_initializer(1.0/(self.pool_1 ** 2)),  padding='valid')(roi_aligns)
-        print(x.get_shape())
+#         # convolution 2d for n, 3, 3, 512 relu
+#         x = KL.Conv2D(512, (self.pool_1, self.pool_1), activation='relu', use_bias=True,
+#                       kernel_initializer=tf.constant_initializer(1.0/(self.pool_1 ** 2)),  padding='valid')(roi_aligns)
+#         print(x.get_shape())
 
-        # conv 2d for n, 1,1, 1024 relu
-        features = KL.Conv2D(1024, (self.pool_2, self.pool_2), activation='relu', use_bias=True,
-                             kernel_initializer=tf.constant_initializer(1.0/(self.pool_2 ** 2)), padding='valid')(x)
+#         # conv 2d for n, 1,1, 1024 relu
+#         features = KL.Conv2D(1024, (self.pool_2, self.pool_2), activation='relu', use_bias=True,
+#                              kernel_initializer=tf.constant_initializer(1.0/(self.pool_2 ** 2)), padding='valid')(x)
 
-        # einai poly megales times kai einai 1024 o idios arithmos to kathe feature...
-        print(features.shape)
+#         # einai poly megales times kai einai 1024 o idios arithmos to kathe feature...
+#         print(features.shape)
 
-        # n, 1024
-        features = tf.squeeze(features, axis=(1, 2))
+#         # n, 1024
+#         features = tf.squeeze(features, axis=(1, 2))
 
-        return features
+#         return features
 
 
 ############################################################
