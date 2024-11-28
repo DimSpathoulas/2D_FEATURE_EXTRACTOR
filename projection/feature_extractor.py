@@ -332,9 +332,9 @@ def main():
                 # print('final[3], [4]', final_box_preds[3], final_box_preds[4])
                 # print(final_box_pred, 'daa', final_box_pred)
 
-                we_cooked = create_box(final_box_preds).T
+                boxed = create_box(final_box_preds).T
 
-                points, depths = world_to_cam(nusc, cam, we_cooked)
+                points, depths = world_to_cam(nusc, cam, boxed)
 
                 # Remove points that are either outside or behind the camera. Leave a margin of 1 pixel for aesthetic reasons.
                 # Also make sure points are at least 1m in front of the camera to avoid seeing the lidar points on the camera
