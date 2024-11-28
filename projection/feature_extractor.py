@@ -16,7 +16,7 @@ import pickle
 from shapely.geometry import MultiPoint, box
 from shapely.geometry import Polygon, LineString
 
-# APO TO NUSCENES
+
 tracking_names = ['pedestrian', 'bicycle', 'motorcycle', 'car', 'bus', 'truck', 'trailer']
 
 detector_classes = ['bg', 'car', 'truck', 'construction_vehicle', 'bus', 'trailer',
@@ -343,20 +343,13 @@ def main():
 
                 
 
-                mask = np.logical_and(mask, depths > 1.0)  # CHANGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+                mask = np.logical_and(mask, depths > 1.0)  # CHANGE FOR BETTER PROJECTIONS
 
-
-
-                # mask = np.logical_and(mask, points[0, :] > 1)
-                # mask = np.logical_and(mask, points[0, :] < im.size[0] - 1)
-                # mask = np.logical_and(mask, points[1, :] > 1)
-                # mask = np.logical_and(mask, points[1, :] < im.size[1] - 1)
                 points = points[:, mask]
 
                 points = points[:2, :].T
 
-                # mporei na xalaei ligo to feature vector consistency alla einai ok mallon genika
-                # H META MPOROYME NA PAROYME EAN EINAI TO IDIO KENTRO TOY 3D TO MEGALYTERO AREA APO AYTO KRATAME TO FEAT.V
+                
                 if points.shape[0] <= 2:
                     continue
 
@@ -434,7 +427,7 @@ def main():
 
                 pred_boxes = data[i]['pred_boxes'][jjj].cpu().numpy().reshape(9)
                 lidar_world = create_box(pred_boxes).T
-                world_box = lidar_to_world(nusc, lidar_data, lidar_world)  # MPOREI TO ROT NA NE LIGO PERIERGO EDO
+                world_box = lidar_to_world(nusc, lidar_data, lidar_world)
                 pred_box_world = retrieve_box_info(world_box)
 
                 # x, y, z, w, l, h, rot_z, dx, dy in world coords
