@@ -5,7 +5,7 @@ import cv2
 import copy
 from pyquaternion import Quaternion
 from mrcnn.config import Config
-from mrcnn import my_model_v3 as modellib
+from mrcnn import model_mrcnn as modellib
 from mrcnn import visualize
 import os
 import torch

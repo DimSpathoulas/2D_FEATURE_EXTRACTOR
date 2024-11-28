@@ -19,11 +19,11 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64
 export PATH=$PATH:/usr/local/cuda/bin
 
 python projection/feature_extractor_v2.py
-python projection/main.py
+python projection/feature_extractor.py
 2. Probably is (?): 
-`python projection/main.py --version v1.0-trainval --data_root /second_ext4/ktsiakas/kosmas/nuscenes/v1.0-trainval --detection_file /home/ktsiakas/thesis_new/PC_FEATURE_EXTRACTOR/tools/centerpoint_predictions_train.npy --output_file mrcnn_train.pkl`  
+`python projection/feature_extractor.py --version v1.0-trainval --data_root /second_ext4/ktsiakas/kosmas/nuscenes/v1.0-trainval --detection_file /home/ktsiakas/thesis_new/PC_FEATURE_EXTRACTOR/tools/centerpoint_predictions_train.npy --output_file mrcnn_train.pkl`  
 or  
-`python projection/main.py --version v1.0-trainval --data_root /second_ext4/ktsiakas/kosmas/nuscenes/v1.0-trainval --detection_file /home/ktsiakas/thesis_new/PC_FEATURE_EXTRACTOR/tools/centerpoint_predictions_val.npy --output_file mrcnn_val.pkl`  
+`python projection/feature_extractor.py --version v1.0-trainval --data_root /second_ext4/ktsiakas/kosmas/nuscenes/v1.0-trainval --detection_file /home/ktsiakas/thesis_new/PC_FEATURE_EXTRACTOR/tools/centerpoint_predictions_val.npy --output_file mrcnn_val.pkl`  
 
 3. L400: `if i % 500 == 0:`. What happens for the last samples? For example, we go up to 1200. One update for the 500, one update for 1000, what happens to the last 200? Do we update them for sure? I guess yes, because ofthe L484, just to be sure. 
 
