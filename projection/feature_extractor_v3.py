@@ -5,7 +5,7 @@ import os.path as osp
 import pickle
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
-
+import tensorflow as tf
 import cv2
 import numpy as np
 from PIL import Image
@@ -370,26 +370,39 @@ def process_sample(sample, projections, model, nusc):
     return results_temp
 
 
-def process_data(data, nusc, model, num_workers, batch_size=1000):
+
+def load_data(file_path, batch_size=100):
+    """
+    Generator function to load data in batches
+    """
+    data = np.load(file_path, allow_pickle=True)
+    for i in range(0, len(data), batch_size):
+        yield data[i:i+batch_size]
+
+
+
+def process_data(data_generator, nusc, model, num_workers, batch_size=10):
     results = {}
     
-    for batch_start in range(0, len(data), batch_size):
-        batch = data[batch_start:batch_start + batch_size]
-        prepare_args = [(sample['metadata'][0]['token'], nusc) for sample in batch]
-
-        with Pool(processes=num_workers) as pool:
-            prepared_data = list(tqdm(pool.imap(prepare_sample_data, prepare_args), total=len(batch), desc="Preparing data"))
-
-        for sample_token, projections in tqdm(prepared_data, desc="Processing samples"):
-            sample_data = next(sample for sample in batch if sample['metadata'][0]['token'] == sample_token)
-            timestamp = sample_data['metadata'][0]['timestamp']
-
-            sample_results = process_sample(sample_data, projections, model, nusc)
+    for large_batch in tqdm(data_generator, desc="Processing large batches"):
+        for i in range(0, len(large_batch), batch_size):
+            batch = large_batch[i:i+batch_size]
             
-            results[sample_token] = [sample_results]
-            
-            if (batch_start + len(results)) % 500 == 0:
-                save_results(results, f"temp_results_{batch_start + len(results)}.pkl")
+            prepare_args = [(sample['metadata'][0]['token'], nusc) for sample in batch]
+
+            with Pool(processes=num_workers) as pool:
+                prepared_data = list(pool.map(prepare_sample_data, prepare_args))
+
+            batch_results = {}
+            for sample_token, projections in prepared_data:
+                sample_data = next(sample for sample in batch if sample['metadata'][0]['token'] == sample_token)
+                sample_results = process_sample(sample_data, projections, model, nusc)
+                batch_results[sample_token] = sample_results
+
+            results.update(batch_results)
+
+            if len(results) % 500 == 0:
+                save_results(results, f"temp_results_{len(results)}.pkl")
                 results = {}
 
     if results:
@@ -412,20 +425,32 @@ def main():
     parser.add_argument('--output_file', type=str,
                         default='mrcnn_train_2_optimized.pkl',
                         help='Path to the output pkl file')
-    parser.add_argument('--num_workers', type=int, default=cpu_count() -2,
+    parser.add_argument('--num_workers', type=int, default=cpu_count() - 2,
                         help='Number of worker processes for CPU tasks')
+    parser.add_argument('--batch_size', type=int, default=25,
+                        help='Batch size for processing')
+    parser.add_argument('--load_batch_size', type=int, default=250,
+                        help='Batch size for loading data from disk')
 
     args = parser.parse_args()
 
-    data = np.load(args.detection_file, allow_pickle=True)
+    # Configure TensorFlow to use GPU memory growth
+    physical_devices = tf.config.list_physical_devices('GPU')
+    try:
+        tf.config.experimental.set_memory_growth(physical_devices[0], True)
+    except:
+        # Invalid device or cannot modify virtual devices once initialized.
+        pass
+
+    data_generator = load_data(args.detection_file, args.load_batch_size)
+    
     nusc = NuScenes(version=args.version, dataroot=args.data_root, verbose=True)
 
-    # Initialize a single model on the GPU
     model = initialize_model(model_dir='lgs')
 
     output_file_pkl = args.output_file
-    print(args.num_workers)
-    results = process_data(data, nusc, model, args.num_workers, batch_size=10)
+    print(f"Number of workers: {args.num_workers}")
+    results = process_data(data_generator, nusc, model, args.num_workers, batch_size=args.batch_size)
     save_results(results, output_file_pkl)
 
 if __name__ == "__main__":

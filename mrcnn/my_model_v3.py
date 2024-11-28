@@ -2611,7 +2611,7 @@ class MaskRCNN(object):
         detections, _, _, shared =\
             self.keras_model.predict([projections_rois, molded_images, image_metas, anchors], verbose=0)
         # Process detections
-
+        # print(f"Shared tensor device: {shared.device} L2614")  # this is numpy
         shared = shared[0]
 
         # !!!!!!!!!!!!!!!!!!!!

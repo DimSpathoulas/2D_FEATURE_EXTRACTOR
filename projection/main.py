@@ -244,10 +244,10 @@ def main():
     parser.add_argument('--data_root', type=str, default='/second_ext4/ktsiakas/kosmas/nuscenes/v1.0-trainval',
                         help='Root directory of the NuScenes dataset')
     parser.add_argument('--detection_file', type=str,
-                        default="/home/ktsiakas/thesis_new/PC_FEATURE_EXTRACTOR/tools/centerpoint_predictions_val_2.npy",
+                        default="/home/ktsiakas/thesis_new/PC_FEATURE_EXTRACTOR/tools/val_conv_layer6455_thr034.npy",
                         help='Path to the npy detection file')
     parser.add_argument('--output_file', type=str,
-                        default='mrcnn_val_2_depth2.pkl',
+                        default='val_conv_layer6455_thr034.pkl',
                         help='Path to the output pkl file')
 
     args = parser.parse_args()
@@ -263,8 +263,6 @@ def main():
     # for all scenes
     for i in tqdm(range(len(data))):
 
-        if i < 84:
-            continue
         # retrieve the sample_token and timestamp
         sample_token = data[i]['metadata'][0]['token']
         # print(sample_token)
@@ -345,7 +343,7 @@ def main():
 
                 
 
-                mask = np.logical_and(mask, depths > 2.0)  # CHANGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+                mask = np.logical_and(mask, depths > 1.0)  # CHANGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
 
 
@@ -430,7 +428,7 @@ def main():
                 label = label[0]
                 track_name = detector_classes[label]
 
-                point_cloud_feats = data[i]['features'][jjj].cpu().numpy().reshape(512, 3, 3)
+                point_cloud_feats = data[i]['features'][jjj].cpu().numpy().reshape(data[i]['features'][jjj].shape[1], data[i]['features'][jjj].shape[2], data[i]['features'][jjj].shape[2])
 
                 pred_score = data[i]['pred_scores'][jjj].cpu().numpy()
 
