@@ -244,10 +244,10 @@ def main():
     parser.add_argument('--data_root', type=str, default='/second_ext4/ktsiakas/kosmas/nuscenes/v1.0-trainval',
                         help='Root directory of the NuScenes dataset')
     parser.add_argument('--detection_file', type=str,
-                        default="/home/ktsiakas/thesis_new/PC_FEATURE_EXTRACTOR/tools/val_conv_layer6455_thr034.npy",
+                        default="/home/ktsiakas/thesis_new/PC_FEATURE_EXTRACTOR/tools/val_conv_layer51233_thr020_050_interpolated.npy",
                         help='Path to the npy detection file')
     parser.add_argument('--output_file', type=str,
-                        default='val_conv_layer6455_thr034.pkl',
+                        default='val_conv_layer51233_thr020_050_interpolated.pkl',
                         help='Path to the output pkl file')
 
     args = parser.parse_args()
