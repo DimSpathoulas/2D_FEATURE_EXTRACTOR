@@ -26,3 +26,6 @@ python projection/feature_extractor.py --version v1.0-trainval --data_root /seco
 ```
 Change paths accordingly.
 ```v2.py``` is under construction.
+
+## Acknowledgments
+Built on top of [official repo](https://github.com/matterport/Mask_RCNN).
