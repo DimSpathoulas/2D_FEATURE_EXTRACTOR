@@ -28,4 +28,4 @@ Change paths accordingly.
 ```v2.py``` is under construction.
 
 ## Acknowledgments
-Built on top of [official repo](https://github.com/matterport/Mask_RCNN).
+Built on top of [Mask_RCNN](https://github.com/matterport/Mask_RCNN).
