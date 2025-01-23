@@ -5,7 +5,7 @@ This module extracts a feature vector for each 3D detected object. A review pape
 
 ## Instructions
 ### 1. Prerequisites 
-You should have already followed the instructions from [my geometric appearance feature extractor repo](https://github.com/DimSpathoulas/PC_FEATURE_EXTRACTOR.git)
+You should have already followed the instructions from my geometric appearance feature extractor [repo](https://github.com/DimSpathoulas/PC_FEATURE_EXTRACTOR.git).
 
 ### 2. Clone our repo and setup the environment
 **This Mask R-CNN repo works with 2.1.0 tensorflow version.**
