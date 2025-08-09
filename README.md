@@ -1,9 +1,12 @@
 # Appearance Feature Exctractor based on 3D detections
 Part of my master thesis: **3D Multi-Modal Multi-Object Tracking via Machine Learning and Analytic Collision Risk Calculation for Autonomous Vehicles Navigation.**
 ## Overview
-This module extracts a feature vector for each 3D detected object. **DESCRIPTION IS UNDER REFINMENT** 
-
-1. 3D BOUNDING BOX PROJECTION TO CORRESPONDING CAMERA 2. ONLY OUR PROJECTIONS ARE FED TO RPN, 3. 1 TO 1 PROJECTION-FEATURE CORRESPONDENCE, 4. STATE VECTOR TRANSFORMED FROM LIDAR TO WORLD FRAME
+This module extracts a feature vector for each 3D detected object. 
+**DESCRIPTION IS UNDER REFINEMENT** 
+1. Project the 3D bounding box from LiDAR to ego (vehicle) frame, then to world frame, then back to ego frame, and finally to each corresponding camera and camera plane (out of the 6 cameras).
+2. For each image, we feed all valid projections to Mask R-CNN's Region Proposal Network (RPN).
+3. The model outputs a one-to-one correspondence between projections and features.
+4. The new state vector is in world frame.
 
 ## Instructions
 ### 1. Prerequisites 
