@@ -1,4 +1,4 @@
-# 2d Feature Exctractor based on 3D detections
+# Appearance Feature Exctractor based on 3D detections
 Part of my master thesis: **3D Multi-Modal Multi-Object Tracking via Machine Learning and Analytic Collision Risk Calculation for Autonomous Vehicles Navigation.**
 ## Overview
 This module extracts a feature vector for each 3D detected object.
