@@ -3,7 +3,7 @@ Part of my master thesis: **3D Multi-Modal Multi-Object Tracking via Machine Lea
 ## Overview
 This module extracts a feature vector for each 3D detected object. 
 **DESCRIPTION IS UNDER REFINEMENT** 
-1. Project each 3D bounding box from LiDAR to ego, to world, back to ego, and finally to each corresponding camera and camera plane (out of the 6 cameras).
+1. Project each 3D bounding box from LiDAR to ego, to world, back to ego, and finally to their corresponding camera and camera plane (out of the 6 cameras).
 2. For each image, we feed all valid projections to Mask R-CNN's Region Proposal Network (RPN).
 3. The model outputs a one-to-one correspondence between projections and features.
 4. The new state vector is in world frame.
