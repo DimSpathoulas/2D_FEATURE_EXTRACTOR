@@ -1,7 +1,7 @@
 # Appearance Feature Exctractor based on 3D detections
 Part of my master thesis: **3D Multi-Modal Multi-Object Tracking via Machine Learning and Analytic Collision Risk Calculation for Autonomous Vehicles Navigation.**
 ## Overview
-This module extracts a feature vector for each 3D detected object.
+This module extracts a feature vector for each 3D detected object. **DESCRIPTION IS UNDER REFINMENT - 1. 3D BOUNDING BOX PROJECTION TO CORRESPONDING CAMERA 2. ONLY OUR PROJECTIONS ARE FED TO RPN, 3. 1 TO 1 PROJECTION-FEATURE CORRESPONDENCE, 4. STATE VECTOR TRANSFORMED FROM LIDAR TO WORLD FRAME **
 
 ## Instructions
 ### 1. Prerequisites 
